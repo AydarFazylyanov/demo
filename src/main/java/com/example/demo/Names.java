@@ -1,6 +1,9 @@
 package com.example.demo;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -8,35 +11,33 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.*;
-
 public class Names {
-    private JSONArray names;
+    private List<Person> names;
+    private final Logger logger = LoggerFactory.getLogger(Names.class);
+    private final ObjectMapper mapper = new ObjectMapper();
     private final String fileName = "src/main/java/com/example/demo/names.json";
 
     Names() {
-        names = new JSONArray();
-        JSONParser parser = new JSONParser();
         try {
-            Object object = parser.parse(new FileReader(fileName));
-            names.addAll((JSONArray) object);
-        } catch (ParseException | IOException e) {
-            e.printStackTrace();
+            names = mapper.readValue(new FileReader(fileName), new TypeReference<>() {
+            });
+        } catch (IOException e) {
+            names = new ArrayList<>();
+            logger.info("Ошибка чтения файла!");
         }
     }
 
-    public void setNames(JSONObject object) {
-        names.add(object);
+    public void setNames(Person person) {
+        names.add(person);
         try (FileWriter fr = new FileWriter(fileName)) {
-            fr.write(names.toJSONString());
+            fr.write(mapper.writeValueAsString(names));
+            logger.info("Записал в файл");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public List<org.json.simple.JSONObject> getNames() {
+    public List<Person> getNames() {
         return names;
     }
 }
