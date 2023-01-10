@@ -6,13 +6,12 @@ import java.util.List;
 
 @RestController
 public class NamesController {
-    private final Names names = new Names();
     @GetMapping("/names")
-    public List<Person> namesGET(){
+    public List<Person> names(Names names){
         return names.getNames();
     }
     @PostMapping(value = "/names", consumes = "application/json")
-    public void namesPOST(@RequestBody Person object){
+    public void names(@RequestBody Person object, Names names){
         names.setNames(object);
     }
 }
