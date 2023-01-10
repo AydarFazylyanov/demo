@@ -7,12 +7,13 @@ import java.util.List;
 
 @RestController
 public class NamesController {
+    private final Names names = new Names();
     @GetMapping("/names")
     public List<?> namesGET(){
-        return new Names().getNames();
+        return names.getNames();
     }
     @PostMapping(value = "/names", consumes = "application/json")
     public void namesPOST(@RequestBody JSONObject object){
-        new Names().setNames(object);
+        names.setNames(object);
     }
 }
